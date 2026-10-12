@@ -1,0 +1,36 @@
+[Unit]
+Description=LangGraph dla n8n — silnik decyzyjny (pętla ReAct, trwała pamięć)
+Documentation=file:///home/ubuntu/langgraph-app/README.md
+After=network-online.target docker.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+
+# Katalog roboczy ma spację na KOŃCU nazwy (/home/ubuntu/n8n/test ).
+# systemd nie obsługuje spacji w WorkingDirectory ani w ExecStart,
+# dlatego idziemy przez dowiązanie symboliczne — ta sama sztuczka,
+# co w dsh-telegram.service.
+WorkingDirectory=/home/ubuntu/langgraph-app
+ExecStart=/home/ubuntu/langgraph-app/.venv/bin/python /home/ubuntu/langgraph-app/serwer_langgraph.py
+
+# Nasłuch TYLKO na adresie hosta w sieci Dockera n8n_default.
+# Dzięki temu serwer nie jest widoczny z internetu ani z localhost.
+Environment=LANGGRAPH_HOST=172.18.0.1
+Environment=LANGGRAPH_PORT=8100
+
+# Klucze (OPENROUTER_API_KEY, LANGGRAPH_TOKEN) NIE są tutaj —
+# serwer czyta je z pliku .env obok siebie (prawa 600).
+
+Restart=always
+RestartSec=5
+
+# Logi: journalctl --user -u langgraph-serwer -f
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=langgraph-serwer
+
+NoNewPrivileges=true
+
+[Install]
+WantedBy=default.target

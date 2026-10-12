@@ -1,0 +1,21 @@
+# --- sekrety ---
+.env
+.env.*
+!.env.example
+
+# --- dane rozmów (prywatne, nie publikujemy) ---
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+
+# --- środowisko Pythona ---
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# --- logi i pliki systemowe ---
+*.log
+.DS_Store
+Thumbs.db
